@@ -1,5 +1,5 @@
 {
-  "name": "miner",
+  "name": "safex_miner",
   "description": "safex miner graphical user interface for safex cash",
   "version": "v1.0.0",
   "homepage": ".",
@@ -35,16 +35,16 @@
   "devDependencies": {
     "electron": "^7.1.1",
     "electron-builder": "^22.1.0",
-    "electron-context-menu": "^0.15.1",
     "electron-installer-dmg": "^3.0.0",
     "electron-packager": "^14.1.0",
     "electron-react-devtools": "^0.5.3",
     "electron-winstaller": "^4.0.0",
     "foreman": "^3.0.1",
-    "react-bootstrap": "^1.0.0-beta.14",
     "react-scripts": "^3.2.0"
   },
   "dependencies": {
+    "react-bootstrap": "^1.0.0-beta.14",
+    "electron-context-menu": "^0.15.1",
     "axios": "^0.19.0",
     "binstring": "^0.2.1",
     "bitcoinjs-lib": "^5.1.6",
@@ -56,12 +56,11 @@
     "react": "^16.12.0",
     "react-copy-to-clipboard": "^5.0.2",
     "react-dom": "^16.12.0",
-    "react-file-download": "^0.3.5",
     "react-file-input": "^0.2.5",
     "react-number-format": "^4.3.1",
     "react-router-dom": "^5.1.2",
-    "safex-addressjs": "git+https://github.com/safex/safex_addressjs.git",
-    "safe-buffer": "^5.2.0"
+    "safe-buffer": "^5.2.0",
+    "safex-addressjs": "git+https://github.com/safex/safex_addressjs.git"
   },
   "main": "src/electron.js",
   "scripts": {
@@ -78,6 +77,12 @@
     "make-all-installers": "npm run build && electron-builder build -ml && electron-builder build -w --x64 --ia32"
   },
   "build": {
+    "extraResources": [
+      {
+        "from": "./extraResources/xmrig-osx",
+        "to": "xmrig-osx"
+      }
+    ],
     "appId": "com.electron.safex_miner",
     "extends": null,
     "files": [
