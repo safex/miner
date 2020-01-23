@@ -41,10 +41,11 @@ function createWindow() {
         slashes: true
     });
 
+
     mainWindow.loadURL(startUrl);
 
-    //uncomment this line for dev tools
-    //mainWindow.webContents.openDevTools();
+    mainWindow.webContents.openDevTools();
+
 
     // Emitted when the window is closed.
     mainWindow.on('closed', function () {
@@ -87,6 +88,7 @@ function createWindow() {
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
+
 require('electron-context-menu')({
     prepend: (params, browserWindow) => [{
         label: 'Safex Cash Miner',
