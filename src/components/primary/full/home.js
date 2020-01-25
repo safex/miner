@@ -1,6 +1,6 @@
 import React from 'react';
-import axios from 'axios';
 import {Row, Col, Container, Button, Form} from 'react-bootstrap';
+import {call_xmrig_summary} from "../../../utils/xmrig_calls";
 
 let {dialog} = window.require("electron").remote;
 const os = window.require('os');
@@ -10,8 +10,6 @@ const safex_lib = window.require('safex-addressjs');
 const fs = window.require('fs').promises;
 
 const access_token = 'ey...';
-const xmrig_summary = 'http://localhost:9999/1/summary';
-const xmrig_config = 'http://localhost:9999/1/config';
 
 export default class Home extends React.Component {
     constructor(props) {
@@ -43,19 +41,14 @@ export default class Home extends React.Component {
         const test_stat = await fs.stat(xmrig_file);
         console.log(test_stat);
         console.log(xmrig_file);
-        console.log(win_proc)
+        console.log(win_proc);
         this.setState({cpu_count: cpus.length, cpu_type: cpus[0].model});
     };
 
     start_mining = (e) => {
         e.preventDefault();
-        this.setState(() => ({
-            mining_active: true
-        }));
-
-        const xmrig_file = path.join(window.process.resourcesPath, 'xmrig-osx');
-
         try {
+            const xmrig_file = path.join(window.process.resourcesPath, 'xmrig-osx');
             const xmrig_process = spawn(xmrig_file,
                 [
                     '--api-worker-id', 'ONE CLICK MINER',
@@ -73,9 +66,14 @@ export default class Home extends React.Component {
                     '-k'
                 ]);
 
+            console.log(xmrig_process);
             this.setState(() => ({
                 xmrig_pid: xmrig_process.pid
             }));
+            this.setState(() => ({
+                mining_active: true
+            }));
+
 
             console.log("Native mining started!");
 
@@ -83,8 +81,7 @@ export default class Home extends React.Component {
             this.setState({
                 status_check_interval: status_check_interval,
             });
-            this.get_config();
-        } catch(err) {
+        } catch (err) {
             console.error(err);
         }
 
@@ -107,40 +104,20 @@ export default class Home extends React.Component {
         console.log("Mining was stopped");
     };
 
-    check_mining_status = () => {
-        axios.defaults.headers.common['Authorization'] = 'Bearer ' + access_token;
-        axios.get(xmrig_summary)
-            .then(response => {
-                console.log(response.data.connection.pool);
-                console.log(response.data.hashrate.total[0]);
-
-                this.setState({
-                    hashrate: response.data.hashrate.total[0]
-                });
-            })
-            .catch(error => {
-                console.log(`Request ERROR ${error}`);
-            });
-
-        this.get_config();
-    };
-
-    get_config = () => {
-
-        axios.defaults.headers.common['Authorization'] = 'Bearer ' + access_token;
-        axios.get(xmrig_config)
-            .then(response => {
-                console.log(response.data);
-                console.log(response.data.connection.pool);
-                console.log(response.data.hashrate.total[0]);
-
-                this.setState({
-                    hashrate: response.data.hashrate.total[0]
-                });
-            })
-            .catch(error => {
-                console.log(`Request ERROR ${error}`);
-            });
+    check_mining_status = async() => {
+        try {
+            let summary = await call_xmrig_summary(access_token);
+            console.log(summary);
+            if (summary.hashrate === null) {
+                this.setState({hashrate: 'connecting threads...'});
+            } else if (summary.hashrate > 0) {
+                this.setState({hashrate: summary.hashrate});
+            }
+        } catch(err) {
+            console.error(err);
+            console.error("error at checking mining status call");
+            this.setState({hashrate: "there is an error"});
+        }
     };
 
     set_mining_address = (e) => {
@@ -205,9 +182,11 @@ export default class Home extends React.Component {
                 this.setState({save_keys: false});
             } catch (err) {
                 console.error(err);
+                console.error("error at writing keys to the file");
             }
         } catch (err) {
             console.error(err);
+            console.error("error at getting the 'showsavedialog' ahead of saving keys")
         }
 
     };
@@ -220,13 +199,19 @@ export default class Home extends React.Component {
             try {
                 let loaded_file = await fs.readFile(load_keys_path[0].toString());
                 let parsed = JSON.parse(loaded_file);
-                console.log(parsed);
-                this.setState({mining_address: parsed.public_address})
+                if (parsed.public_address === undefined) {
+                    alert("file format no good.");
+                } else {
+                    console.log(parsed);
+                    this.setState({mining_address: parsed.public_address})
+                }
             } catch (err) {
                 console.error(err);
+                console.error("error when reading the file to load keys from")
             }
         } catch (err) {
             console.error(err);
+            console.error("error at showopendialog at loading address from file");
         }
 
 
@@ -333,7 +318,7 @@ export default class Home extends React.Component {
                                     <li>mining address: {this.state.mining_address}</li>
                                     <li>pool url: {this.state.mining_pool}</li>
                                     <li># of cpus: {this.state.cpu_choice}</li>
-                                    <li>hash rate: {this.state.hashrate} hashes per second</li>
+                                    <li>hash rate (hashes per second): {this.state.hashrate}</li>
                                     <li>mining
                                         state: {this.state.mining_active ? 'mining is active' : 'mining is not active'}</li>
                                     <li>
