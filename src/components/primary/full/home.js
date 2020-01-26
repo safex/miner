@@ -50,7 +50,13 @@ export default class Home extends React.Component {
     start_mining = (e) => {
         e.preventDefault();
         try {
-            const xmrig_file = path.join(window.process.resourcesPath, 'xmrig-osx');
+            if (process.platform === 'darwin') {
+                const xmrig_file = path.join(window.process.resourcesPath, 'xmrig-osx');
+            } else if (process.platform === 'linux') {
+                const xmrig_file = path.join(window.process.resourcesPath, 'xmrig-linux');
+            } else if (process.platform === 'win') {
+                const xmrig_file = path.join(window.process.resourcesPath, 'xmrig-win');
+            }
             const xmrig_process = spawn(xmrig_file,
                 [
                     '--api-worker-id', 'ONE CLICK MINER',
@@ -68,7 +74,6 @@ export default class Home extends React.Component {
                     '-k'
                 ]);
 
-            console.log(xmrig_process);
             this.setState(() => ({
                 xmrig_pid: xmrig_process.pid
             }));
