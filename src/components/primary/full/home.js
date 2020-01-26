@@ -10,8 +10,9 @@ const safex_lib = window.require('safex-addressjs');
 const fs = window.require('fs').promises;
 const crypto = window.require('crypto');
 
-const access_token = crypto.randomBytes(8).toString('hex');
+const access_token = crypto.randomBytes(3).toString('hex');
 
+console.log(access_token);
 
 export default class Home extends React.Component {
     constructor(props) {
@@ -37,25 +38,29 @@ export default class Home extends React.Component {
     async componentDidMount() {
         let cpus = os.cpus();
 
-        const xmrig_file = path.join(window.process.resourcesPath, 'xmrig-osx');
+        let xmrig_file = path.join(window.process.resourcesPath, 'xmrig-osx');
 
         const win_proc = await fs.readdir(window.process.resourcesPath);
         const test_stat = await fs.stat(xmrig_file);
         console.log(test_stat);
         console.log(xmrig_file);
         console.log(win_proc);
+        console.log(window.process.platform);
+        console.log(access_token);
+
         this.setState({cpu_count: cpus.length, cpu_type: cpus[0].model});
     };
 
     start_mining = (e) => {
         e.preventDefault();
         try {
-            if (process.platform === 'darwin') {
-                const xmrig_file = path.join(window.process.resourcesPath, 'xmrig-osx');
-            } else if (process.platform === 'linux') {
-                const xmrig_file = path.join(window.process.resourcesPath, 'xmrig-linux');
-            } else if (process.platform === 'win32') {
-                const xmrig_file = path.join(window.process.resourcesPath, 'xmrig-win');
+            var xmrig_file;
+            if (window.process.platform === 'darwin') {
+                xmrig_file = path.join(window.process.resourcesPath, 'xmrig-osx');
+            } else if (window.process.platform === 'linux') {
+                xmrig_file = path.join(window.process.resourcesPath, 'xmrig-linux');
+            } else if (window.process.platform === 'win32') {
+                xmrig_file = path.join(window.process.resourcesPath, 'xmrig-win');
             }
             const xmrig_process = spawn(xmrig_file,
                 [
@@ -63,7 +68,7 @@ export default class Home extends React.Component {
                     '--http-enabled',
                     '--http-host', '127.0.0.1',
                     '--http-port', '9999',
-                    '--http-access-token', access_token,
+                    '--http-access-token', access_token.toString(),
                     '--http-no-restricted',
                     '--coin', 'sfx',
                     '--threads=N', this.state.cpu_choice,
@@ -113,7 +118,7 @@ export default class Home extends React.Component {
 
     check_mining_status = async () => {
         try {
-            let summary = await call_xmrig_summary(access_token);
+            let summary = await call_xmrig_summary(access_token.toString());
             console.log(summary);
             if (summary.hashrate === null) {
                 this.setState({hashrate: 'connecting threads...'});
