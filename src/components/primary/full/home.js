@@ -104,7 +104,7 @@ export default class Home extends React.Component {
         console.log("Mining was stopped");
     };
 
-    check_mining_status = async() => {
+    check_mining_status = async () => {
         try {
             let summary = await call_xmrig_summary(access_token);
             console.log(summary);
@@ -113,7 +113,7 @@ export default class Home extends React.Component {
             } else if (summary.hashrate > 0) {
                 this.setState({hashrate: summary.hashrate});
             }
-        } catch(err) {
+        } catch (err) {
             console.error(err);
             console.error("error at checking mining status call");
             this.setState({hashrate: "there is an error"});

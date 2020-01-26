@@ -1,7 +1,7 @@
 {
   "name": "safex_miner",
   "description": "safex miner graphical user interface for safex cash",
-  "version": "v1.0.0",
+  "version": "0.0.3",
   "homepage": ".",
   "repository": {
     "type": "git",
@@ -77,12 +77,6 @@
     "make-all-installers": "npm run build && electron-builder build -ml && electron-builder build -w --x64 --ia32"
   },
   "build": {
-    "extraResources": [
-      {
-        "from": "./extraResources/xmrig-osx",
-        "to": "xmrig-osx"
-      }
-    ],
     "appId": "com.electron.safex_miner",
     "extends": null,
     "files": [
@@ -96,6 +90,12 @@
       "build/static/js/*.*"
     ],
     "mac": {
+      "extraResources": [
+        {
+          "from": "./extraResources/xmrig-osx",
+          "to": "xmrig-osx"
+        }
+      ],
       "category": "public.app-category.business",
       "icon": "public/images/icons/wallet-icon2.icns",
       "type": "distribution",
@@ -104,10 +104,22 @@
       ]
     },
     "win": {
+      "extraResources": [
+      {
+        "from": "./extraResources/xmrig-win",
+        "to": "xmrig-win"
+      }
+    ],
       "target": "nsis",
       "icon": "public/images/icons/wallet-icon2.ico"
     },
     "linux": {
+      "extraResources": [
+        {
+          "from": "./extraResources/xmrig-linux",
+          "to": "xmrig-linux"
+        }
+      ],
       "target": [
         "deb",
         "rpm"
