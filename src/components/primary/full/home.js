@@ -8,8 +8,10 @@ const path = window.require('path');
 const {spawn} = window.require('child_process');
 const safex_lib = window.require('safex-addressjs');
 const fs = window.require('fs').promises;
+const crypto = window.require('crypto');
 
-const access_token = 'ey...';
+const access_token = crypto.randomBytes(8).toString('hex');
+
 
 export default class Home extends React.Component {
     constructor(props) {
@@ -195,19 +197,20 @@ export default class Home extends React.Component {
         e.preventDefault();
         try {
             let load_keys_path = dialog.showOpenDialogSync();
-            console.log(load_keys_path[0]);
-            try {
-                let loaded_file = await fs.readFile(load_keys_path[0].toString());
-                let parsed = JSON.parse(loaded_file);
-                if (parsed.public_address === undefined) {
-                    alert("file format no good.");
-                } else {
-                    console.log(parsed);
-                    this.setState({mining_address: parsed.public_address})
+            if (load_keys_path !== undefined) {
+                try {
+                    let loaded_file = await fs.readFile(load_keys_path[0].toString());
+                    let parsed = JSON.parse(loaded_file);
+                    if (parsed.public_address === undefined) {
+                        alert("file format no good.");
+                    } else {
+                        console.log(parsed);
+                        this.setState({mining_address: parsed.public_address})
+                    }
+                } catch (err) {
+                    console.error(err);
+                    console.error("error when reading the file to load keys from")
                 }
-            } catch (err) {
-                console.error(err);
-                console.error("error when reading the file to load keys from")
             }
         } catch (err) {
             console.error(err);
