@@ -54,7 +54,7 @@ export default class Home extends React.Component {
                 const xmrig_file = path.join(window.process.resourcesPath, 'xmrig-osx');
             } else if (process.platform === 'linux') {
                 const xmrig_file = path.join(window.process.resourcesPath, 'xmrig-linux');
-            } else if (process.platform === 'win') {
+            } else if (process.platform === 'win32') {
                 const xmrig_file = path.join(window.process.resourcesPath, 'xmrig-win');
             }
             const xmrig_process = spawn(xmrig_file,
