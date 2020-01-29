@@ -23,7 +23,8 @@ export default class Home extends React.Component {
             pools_list: [
                 'pool.safexnews.net:3311',
                 'cryptokafa.com:2222',
-                'mcafee.safex.io:1111'
+                'mcafee.safex.io:1111',
+                'sfx.pool-pay.com:4027'
             ],
             cpu_count: 0,
             mining_address: '',
