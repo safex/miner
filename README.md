@@ -11,6 +11,7 @@ This application is built using ReactJS and Electron. Additionally, it uses Xmri
 ## Running from CLI
 
 `npm install`
+
 `npm run dev`
 
 ## License
