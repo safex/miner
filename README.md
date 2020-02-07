@@ -11,13 +11,14 @@ This application is built using ReactJS and Electron. Additionally, it uses Xmri
 ## Running from CLI
 
 `npm install`
+
 `npm run dev`
 
 ## License
 
 MIT License
 
-Copyright (c) 2020 Safex
+Copyright (c) 2020 Safex Foundation
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
