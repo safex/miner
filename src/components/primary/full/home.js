@@ -118,10 +118,24 @@ export default class Home extends React.Component {
             hashrate: 0
         }));
 
-        console.log(this.state.xmrig_pid);
-        spawn('killall', ['xmrig-osx']);
+        if (window.process.platform === 'darwin') {
+            console.log("entered darwin");
+            console.log(this.state.xmrig_pid);
+            spawn('killall', ['xmrig-osx']);
 
-        console.log("Mining was stopped");
+            console.log("Mining was stopped");
+        } else if (window.process.platform === 'linux') {
+            console.log(this.state.xmrig_pid);
+            spawn('killall', ['xmrig-linux']);
+
+            console.log("Mining was stopped");
+        } else if (window.process.platform === 'win32') {
+            console.log(this.state.xmrig_pid);
+            spawn('killall', ['xmrig-win.exe']);
+
+            console.log("Mining was stopped");
+        }
+
     };
 
     check_mining_status = async () => {
